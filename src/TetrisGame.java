@@ -5,7 +5,9 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+@SuppressWarnings("serial")
 public class TetrisGame extends JFrame implements KeyListener {
+
 	private GameHandler handler;
 	private JTextArea textArea = new JTextArea();
 
@@ -17,8 +19,10 @@ public class TetrisGame extends JFrame implements KeyListener {
 										// Font.PLAIN, 30)); add(textArea);
 		textArea.setEditable(false);
 		textArea.setFont(new Font("Courier", Font.PLAIN, 26));
+
 		textArea.addKeyListener(this);
 		add(textArea);
+		textArea.setEditable(false);
 		setVisible(true);
 
 		handler = new GameHandler(textArea);
@@ -32,44 +36,59 @@ public class TetrisGame extends JFrame implements KeyListener {
 	class GameThread implements Runnable {
 		@Override
 		public void run() {
+			// game loop
 			while (!handler.isGameOver()) {
-				// 1. Game timing ================================ handler.gameTiming();
-				// 3. Game logic ==================================
+				handler.gameTiming();
 				handler.gameLogic();
-				// 4. Render output ==============================
 				handler.drawAll();
 			}
-			// game over
+
 			handler.drawGameOver();
 		}
 	}
-	// 2. Get Input ======================================
+	
+	
+	public void restart() {
+	     handler.initData();
+	     new Thread(new GameThread()).start();
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_RIGHT: // Right key pressed handler.moveRightBlock();
-			break;
-		case KeyEvent.VK_LEFT: // Left key pressed handler.moveLeftBlock();
-			break;
-		case KeyEvent.VK_DOWN: // Down key pressed handler.moveDownBlock();
-			break;
-		case KeyEvent.VK_UP: // Up key pressed handler.rotateBlock();
-			break;
-		}
-
+		
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_D: // Right key pressed
+			handler.moveRightBlock();
+			break;
+		case KeyEvent.VK_A: // Left key pressed
+			handler.moveLeftBlock();
+			break;
+		case KeyEvent.VK_S: // Down key pressed
+			handler.moveDownBlock();
+			break;
+		case KeyEvent.VK_W: // Up key pressed
+			handler.rotateBlock();
+			break;
+		case KeyEvent.VK_Y: // Y key pressed if (handler.isGameOver())
+			restart();
+			break;
+		case KeyEvent.VK_N: // N key pressed if (handler.isGameOver())
+			System.exit(0);
+			break;
+		case KeyEvent.VK_SPACE: // Right key pressed
+			handler.moveForwardDown();
+			break;
+
+		}
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 }
